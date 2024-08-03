@@ -187,8 +187,8 @@ class MyLibraryService
                     if (!empty($serie)) {
                         $album->serie()->associate($serie);
 
-                        if (isset($decodedSerie->issue) and !empty($decodedSerie->issue)) {
-                            $album->serie_issue = $decodedSerie->issue;
+                        if (isset($decodedSerie->volume) and !empty($decodedSerie->volume)) {
+                            $album->serie_issue = (int)$decodedSerie->volume;
                         }
                     }
                 }
@@ -198,7 +198,7 @@ class MyLibraryService
             if (!empty($albumML['PUBLISHER'])) {
                 $publisher = Publisher::where('name', $albumML['PUBLISHER'])->first();
                 if (!empty($publisher)) {
-                    $album->publishers()->attach($publisher);
+                    $album->publishers()->attach($publisher, ['published_date' => $albumML['PUBLISHED_DATE']]);
                 }
             }
 
