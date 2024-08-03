@@ -25,6 +25,7 @@ class Album extends Model
         'comment',
         'read',
         'serie_id',
+        'serie_issue',
     ];
 
     /**
@@ -35,6 +36,7 @@ class Album extends Model
     protected $casts = [
         'id' => 'integer',
         'serie_id' => 'integer',
+        'serie_issue' => 'integer',
     ];
 
     public function serie(): BelongsTo
@@ -44,11 +46,11 @@ class Album extends Model
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Author::class);
+        return $this->belongsToMany(Author::class)->withPivot('role');
     }
 
     public function publishers(): BelongsToMany
     {
-        return $this->belongsToMany(Publisher::class);
+        return $this->belongsToMany(Publisher::class)->withPivot('published_date');
     }
 }

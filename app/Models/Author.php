@@ -31,6 +31,6 @@ class Author extends Model
 
     public function albums(): BelongsToMany
     {
-        return $this->belongsToMany(Album::class);
+        return $this->belongsToMany(Album::class)->withPivot('role');
     }
 }

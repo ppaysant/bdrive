@@ -33,6 +33,6 @@ class Publisher extends Model
 
     public function albums(): BelongsToMany
     {
-        return $this->belongsToMany(Album::class);
+        return $this->belongsToMany(Album::class)->withPivot('published_date');
     }
 }

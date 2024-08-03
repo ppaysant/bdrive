@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('album_id');
             $table->foreignId('author_id');
-            $table->string('role');
+            $table->string('role')->nullable();
             $table->timestamps();
         });
     }

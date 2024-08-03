@@ -19,8 +19,9 @@ return new class extends Migration
             $table->text('cover')->nullable();
             $table->string('isbn')->nullable();
             $table->text('comment')->nullable();
-            $table->string('read');
-            $table->foreignId('serie_id');
+            $table->boolean('read')->default(false);
+            $table->foreignId('serie_id')->nullable();
+            $table->unsignedInteger('serie_issue')->nullable();
             $table->timestamps();
         });
     }

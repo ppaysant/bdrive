@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('album_id');
             $table->foreignId('publisher_id');
-            $table->date('published_date');
+            $table->date('published_date')->nullable();
             $table->timestamps();
         });
     }
