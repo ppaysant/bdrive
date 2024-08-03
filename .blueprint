@@ -1,0 +1,21 @@
+created:
+    - database/factories/AuthorFactory.php
+    - database/factories/PublisherFactory.php
+    - database/factories/SerieFactory.php
+    - database/factories/AlbumFactory.php
+    - database/migrations/2024_08_03_103845_create_authors_table.php
+    - database/migrations/2024_08_03_103846_create_publishers_table.php
+    - database/migrations/2024_08_03_103847_create_series_table.php
+    - database/migrations/2024_08_03_103848_create_albums_table.php
+    - database/migrations/2024_08_03_103849_create_album_author_table.php
+    - database/migrations/2024_08_03_103850_create_album_publisher_table.php
+    - app/Models/Author.php
+    - app/Models/Publisher.php
+    - app/Models/Serie.php
+    - app/Models/Album.php
+models:
+    User: { name: string, email: string, email_verified_at: 'datetime nullable', password: string, remember_token: 'string nullable' }
+    Author: { firstname: 'string nullable', lastname: string, relationships: { belongsToMany: Album } }
+    Publisher: { name: string, url: 'string nullable', url_search_album: 'text nullable', url_search_author: 'text nullable', relationships: { belongsToMany: Album } }
+    Serie: { title: string }
+    Album: { title: string, summary: 'text nullable', pages: 'int nullable', cover: 'text nullable', isbn: 'string nullable', comment: 'text nullable', read: 'boolean,default:false', relationships: { belongsTo: Serie, belongsToMany: 'Author, Publisher' } }

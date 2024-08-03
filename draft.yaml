@@ -1,0 +1,29 @@
+models:
+  Author:
+    firstname: string nullable
+    lastname: string
+    relationships:
+      belongsToMany: Album
+
+  Publisher:
+    name: string
+    url: string nullable
+    url_search_album: text nullable
+    url_search_author: text nullable
+    relationships:
+      belongsToMany: Album
+
+  Serie:
+    title: string
+
+  Album:
+    title: string
+    summary: text nullable
+    pages: int nullable
+    cover: text nullable
+    isbn: string nullable
+    comment: text nullable
+    read: boolean,default:false
+    relationships:
+      belongsTo: Serie
+      belongsToMany: Author, Publisher
