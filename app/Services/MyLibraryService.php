@@ -78,9 +78,8 @@ class MyLibraryService
 
         $publishers = [];
         foreach ($results as $result) {
-            $title = Str::ucfirst(Str::lower($result['PUBLISHER']));
-            if (!isset($publishers[$title])) {
-                $publishers[$title] = true;
+            if (!in_array(Str::upper($result['PUBLISHER']), array_keys($publishers))) {
+                $publishers[$result['PUBLISHER']] = true;
             }
         }
 
