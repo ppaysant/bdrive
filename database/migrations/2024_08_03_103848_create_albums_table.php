@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('summary')->nullable();
-            $table->string('pages')->nullable();
+            $table->unsignedInteger('pages')->nullable();
             $table->text('cover')->nullable();
             $table->string('isbn')->nullable();
             $table->text('comment')->nullable();
             $table->boolean('read')->default(false);
+            $table->boolean('complete')->default(false);
             $table->foreignId('serie_id')->nullable();
             $table->unsignedInteger('serie_issue')->nullable();
             $table->timestamps();
