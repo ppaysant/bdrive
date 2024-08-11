@@ -3,6 +3,7 @@
 namespace App\Filament\Forms;
 
 use App\Models\Album;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -35,8 +36,10 @@ class AlbumForm
             TextInput::make('pages'),
             MarkdownEditor::make('summary')
                 ->columnSpanFull(),
-            Textarea::make('cover')
-                ->columnSpanFull(),
+            FileUpload::make('cover')
+                ->image()
+                ->imageEditor()
+                ->directory('covers'),
             MarkdownEditor::make('comment')
                 ->columnSpanFull(),
         ];
