@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 class Album extends Model
 {
@@ -52,5 +53,16 @@ class Album extends Model
     public function publishers(): BelongsToMany
     {
         return $this->belongsToMany(Publisher::class)->withPivot('published_date');
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::updating(function($model) {
+            if ($model->isDirty('cover') and ($model->getOriginal('cover') !== null)) {
+                Storage::disk('public')->delete($model->getOriginal('cover'));
+            }
+        });
     }
 }
