@@ -11,6 +11,9 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,30 +34,31 @@ class AlbumResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                ImageColumn::make('cover'),
+                TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('pages')
+                TextColumn::make('pages')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('isbn')
+                TextColumn::make('isbn')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('read')
+                IconColumn::make('read')
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('complete')
+                IconColumn::make('complete')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('serie.title')
+                TextColumn::make('serie.title')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('serie_issue')
+                TextColumn::make('serie_issue')
                     ->numeric(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
