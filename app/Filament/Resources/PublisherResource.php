@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\PublisherForm;
 use App\Filament\Resources\PublisherResource\Pages;
 use App\Filament\Resources\PublisherResource\RelationManagers;
 use App\Models\Publisher;
@@ -23,13 +24,7 @@ class PublisherResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('url'),
-                Forms\Components\TextInput::make('search_album_url'),
-                Forms\Components\TextInput::make('search_author_url'),
-            ]);
+            ->schema(PublisherForm::getForm());
     }
 
     public static function table(Table $table): Table

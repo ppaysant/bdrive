@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\AuthorForm;
 use App\Filament\Resources\AuthorResource\Pages;
 use App\Filament\Resources\AuthorResource\RelationManagers;
 use App\Models\Author;
@@ -23,11 +24,7 @@ class AuthorResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('firstname'),
-                Forms\Components\TextInput::make('lastname')
-                    ->required(),
-            ]);
+            ->schema(AuthorForm::getForm());
     }
 
     public static function table(Table $table): Table

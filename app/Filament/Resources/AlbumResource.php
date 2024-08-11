@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\AlbumForm;
 use App\Filament\Resources\AlbumResource\Pages;
 use App\Filament\Resources\AlbumResource\RelationManagers;
 use App\Models\Album;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,26 +24,7 @@ class AlbumResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
-                Forms\Components\Textarea::make('summary')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('pages'),
-                Forms\Components\Textarea::make('cover')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('isbn'),
-                Forms\Components\Textarea::make('comment')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('read')
-                    ->required(),
-                Forms\Components\Toggle::make('complete')
-                    ->required(),
-                Forms\Components\Select::make('serie_id')
-                    ->relationship('serie', 'title'),
-                Forms\Components\TextInput::make('serie_issue')
-                    ->numeric(),
-            ]);
+            ->schema(AlbumForm::getForm());
     }
 
     public static function table(Table $table): Table
@@ -57,7 +40,7 @@ class AlbumResource extends Resource
                 Tables\Columns\TextColumn::make('isbn')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                    Tables\Columns\IconColumn::make('read')
+                Tables\Columns\IconColumn::make('read')
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('complete')

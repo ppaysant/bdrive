@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\SerieForm;
 use App\Filament\Resources\SerieResource\Pages;
 use App\Filament\Resources\SerieResource\RelationManagers;
 use App\Models\Serie;
@@ -23,10 +24,7 @@ class SerieResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
-            ]);
+            ->schema(SerieForm::getForm());
     }
 
     public static function table(Table $table): Table
