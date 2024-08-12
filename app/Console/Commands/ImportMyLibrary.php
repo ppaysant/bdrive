@@ -13,7 +13,9 @@ class ImportMyLibrary extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = 'ml:import {mlpath : Path to My Library sqlite database}';
+    protected $signature = 'ml:import
+                            {mlpath : Path to My Library sqlite database}
+                            {coverdir? : Path to cover folder}';
 
     /**
      * The console command description.
@@ -27,6 +29,6 @@ class ImportMyLibrary extends Command implements PromptsForMissingInput
      */
     public function handle(MyLibraryService $mlService)
     {
-        $mlService->import($this->argument('mlpath'), $this);
+        $mlService->import($this->argument('mlpath'), $this->argument('coverdir'), $this);
     }
 }

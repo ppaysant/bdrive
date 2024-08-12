@@ -8,20 +8,25 @@ use App\Models\Publisher;
 use App\Models\Serie;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PDO;
 
 class MyLibraryService
 {
+    protected $cmd;
+
     /**
      * Import from My Library sqlite database
      */
-    public function import(string $mlpath, Command $cmd = null)
+    public function import(string $mlpath, string $coverDir, Command $cmd = null)
     {
         // verify path exists
         if (!file_exists($mlpath)) {
             return [];
         }
+
+        $this->cmd = $cmd;
 
         $ml = new PDO('sqlite:' . $mlpath);
 
@@ -39,7 +44,7 @@ class MyLibraryService
 
         // import albums
         $cmd->info('Importing albums...');
-        $this->importAlbums($ml);
+        $this->importAlbums($ml, $coverDir);
 
         return [];
     }
@@ -132,13 +137,21 @@ class MyLibraryService
      * Import albums from My Library sqlite database
      *
      * @param mixed $ml PDO object
+     * @param string $coverDir
      * @return void
      */
-    public function importAlbums($ml)
+    public function importAlbums($ml, $coverDir = '')
     {
         $sth = $ml->prepare('SELECT COMIC.*, AUTHOR.FIRSTNAME AS AUTHOR_FIRSTNAME, AUTHOR.LASTNAME AS AUTHOR_LASTNAME FROM COMIC JOIN AUTHOR ON COMIC.AUTHOR = AUTHOR.ID');
         $sth->execute();
         $albumsML = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!empty($coverDir)) {
+            $diskSrc = Storage::build([
+                'driver' => 'local',
+                'root' => $coverDir,
+            ]);
+        }
 
         foreach ($albumsML as $albumML) {
             if (empty($albumML['TITLE'])) {
@@ -151,6 +164,25 @@ class MyLibraryService
             $album->pages = $albumML['PAGES'];
             $album->isbn = $albumML['ISBN'];
             $album->save();
+
+            // cover
+            // TODO: find a storage strategy to avoid too much files in one single folder
+            if (!empty($albumML['COVER_PATH']) and !empty($coverDir)) {
+                $coverMLFilename = Str::afterLast($albumML['COVER_PATH'], '/');
+
+                if ($diskSrc->exists($coverMLFilename)) {
+                    $extension = Str::afterLast($coverMLFilename, '.');
+                    $coverFilename = 'cover_' . $album->id . (empty($extension) ? '' : '.' . $extension);
+                    $coverPath = 'covers/' . $coverFilename;
+
+                    if (!Storage::disk('public')->exists($coverPath)) {
+                        Storage::disk('public')->put($coverPath, $diskSrc->get($coverMLFilename));
+                    }
+
+                    $album->cover = $coverPath;
+                    $album->save();
+                }
+            }
 
             // author
             if (!empty($albumML['AUTHOR'])) {
