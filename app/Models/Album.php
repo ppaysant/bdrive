@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Album extends Model
 {
@@ -62,6 +63,25 @@ class Album extends Model
         static::updating(function($model) {
             if ($model->isDirty('cover') and ($model->getOriginal('cover') !== null)) {
                 Storage::disk('public')->delete($model->getOriginal('cover'));
+
+                if (!is_null($model->cover)) {
+                    $extension = Str::afterLast($model->cover, '.');
+                    $newFilename = 'cover_' . $model->id . '.' . $extension;
+                    Storage::disk('public')->move($model->cover, 'covers/' . $newFilename);
+
+                    $model->cover = 'covers/' . $newFilename;
+                }
+            }
+        });
+
+        static::created(function ($model) {
+            if (!is_null($model->cover)) {
+                $extension = Str::afterLast($model->cover, '.');
+                $newFilename = 'cover_' . $model->id . '.' . $extension;
+                Storage::disk('public')->move($model->cover, 'covers/' . $newFilename);
+
+                $model->cover = 'covers/' . $newFilename;
+                $model->save();
             }
         });
     }
