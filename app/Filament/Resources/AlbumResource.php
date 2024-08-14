@@ -34,7 +34,8 @@ class AlbumResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('cover'),
+                ImageColumn::make('cover')
+                    ->height(100),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
