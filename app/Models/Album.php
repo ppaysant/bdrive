@@ -26,6 +26,7 @@ class Album extends Model
         'isbn',
         'comment',
         'read',
+        'complete',
         'serie_id',
         'serie_issue',
     ];
