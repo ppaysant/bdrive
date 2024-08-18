@@ -6,6 +6,9 @@ use App\Filament\Forms\AlbumForm;
 use App\Filament\Resources\AlbumResource\Pages;
 use App\Models\Album;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -44,8 +47,9 @@ class AlbumResource extends Resource
                             ->sortable()
                             ->weight(FontWeight::Bold)
                             ->state(fn (Album|null $record): string => $record->albumTitle),
-                        TextColumn::make('authors_list')
-                            ->size(TextColumn\TextColumnSize::ExtraSmall),
+                        TextColumn::make('authors.list')
+                            ->size(TextColumn\TextColumnSize::ExtraSmall)
+                            ->state(fn (Album|null $record): string => $record->authors->pluck('lastname')->join(', ')),
                         TextColumn::make('serie_title')
                             ->sortable(query: function(Builder $query, string $direction): Builder {
                                 // FIXME: leftJoin would be best but causes strange error (edit route has no record...)
@@ -81,11 +85,49 @@ class AlbumResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                ImageEntry::make('cover')
+                    ->hiddenLabel(true)
+                    ->defaultImageUrl(url('/storage/no-picture.png')),
+                TextEntry::make('title'),
+                TextEntry::make('serie.title')
+                    ->state(fn (Album|null $record): string => (
+                                !empty($record?->serie?->title) ?
+                                    $record->serie->title . ', ' . (!empty($record->serie_issue) ? 'tome ' . $record->serie_issue : '')
+                                    : ''
+                            )),
+                TextEntry::make('isbn'),
+                TextEntry::make('summary')
+                    ->visible(fn (Album|null $record): bool => !empty($record?->summary))
+                    ->markdown(),
+                TextEntry::make('authors_list')
+                    ->label('Authors')
+                    ->state(fn (Album|null $record): string => $record->authors->pluck('lastname')->join(', ')),
+                TextEntry::make('pages')
+                    ->visible(fn (Album|null $record): bool => !empty($record?->pages))
+                    ->state(fn (Album|null $record): string => (!empty($record->pages) ? $record->pages . ' pages' : '')),
+                TextEntry::make('complete')
+                    ->visible(fn (Album|null $record): bool => !empty($record?->complete))
+                    ->badge()
+                    ->state(fn (Album|null $record): string => ($record->complete ? 'Complete' : '')),
+                TextEntry::make('comment')
+                    ->visible(fn (Album|null $record): bool => !empty($record?->comment))
+                    ->markdown(),
+                TextEntry::make('publishers_list')
+                    ->state(fn (Album|null $record): string => $record->publishers->pluck('name')->join(', ')),
+
             ]);
     }
 
@@ -102,6 +144,7 @@ class AlbumResource extends Resource
             'index' => Pages\ListAlbums::route('/'),
             'create' => Pages\CreateAlbum::route('/create'),
             'edit' => Pages\EditAlbum::route('/{record}/edit'),
+            'view' => Pages\ViewAlbum::route('/{record}'),
         ];
     }
 }
