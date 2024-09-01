@@ -6,6 +6,8 @@ use App\Models\Album;
 use App\Services\AlbumInfos;
 use App\Services\AlbumInfosBnfProvider;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
@@ -47,25 +49,55 @@ class AlbumForm
                             ]);
                         })
                         ->form([
-                            TextInput::make('title')
-                                ->disabled(true)
-                                ->dehydrated(),
-                            Textarea::make('resume')
-                                ->rows(10)
-                                ->disabled(true)
-                                ->dehydrated(),
-                            TextInput::make('serie')
-                                ->disabled(true)
-                                ->dehydrated(),
-                            TextInput::make('serie_issue')
-                                ->disabled(true)
-                                ->dehydrated(),
-                            TextInput::make('publisher')
-                                ->disabled(true)
-                                ->dehydrated(),
+                            Fieldset::make()->schema([
+                                Checkbox::make('getTitle')
+                                    ->hiddenLabel()
+                                    ->columnSpan(1),
+                                TextInput::make('title')
+                                    ->disabled(true)
+                                    ->dehydrated()
+                                    ->columnSpan(11),
+                                Checkbox::make('getResume')
+                                    ->hiddenLabel()
+                                    ->columnSpan(1),
+                                Textarea::make('resume')
+                                    ->rows(10)
+                                    ->disabled(true)
+                                    ->dehydrated()
+                                    ->columnSpan(11),
+                                Checkbox::make('getSerie')
+                                    ->hiddenLabel()
+                                    ->columnSpan(1),
+                                TextInput::make('serie')
+                                    ->disabled(true)
+                                    ->dehydrated()
+                                    ->columnSpan(11),
+                                Checkbox::make('getSerieIssue')
+                                    ->hiddenLabel()
+                                    ->columnSpan(1),
+                                TextInput::make('serie_issue')
+                                    ->disabled(true)
+                                    ->dehydrated()
+                                    ->columnSpan(11),
+                                Checkbox::make('getPublisher')
+                                    ->hiddenLabel()
+                                    ->columnSpan(1),
+                                TextInput::make('publisher')
+                                    ->disabled(true)
+                                    ->dehydrated()
+                                    ->columnSpan(11),
+                            ])->columns(12),
                         ])
                         ->action(function (array $data, Set $set) {
-                            $set('summary', $data['resume']);
+                            if ($data['getTitle'] == 1) {
+                                $set('title', $data['title']);
+                            }
+                            if ($data['getResume'] == 1) {
+                                $set('summary', $data['resume']);
+                            }
+                            if ($data['getSerieIssue'] == 1) {
+                                $set('serie_issue', $data['serie_issue']);
+                            }
                         })
                 ),
             Toggle::make('complete')
