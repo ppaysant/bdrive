@@ -11,6 +11,7 @@ class AlbumInfos
     public $publisher = '';
     public $authors = [];
     public $resume = '';
+    public $materialDescription = '';
     public $serie = '';
     public $serie_issue = '';
 
@@ -22,6 +23,7 @@ class AlbumInfos
             'publisher' => $this->publisher,
             'authors' => $this->authors,
             'resume' => $this->resume,
+            'materialDescription' => $this->materialDescription,
             'serie' => $this->serie,
             'serie_issue' => $this->serie_issue,
         ];

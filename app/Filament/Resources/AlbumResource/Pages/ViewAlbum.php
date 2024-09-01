@@ -9,4 +9,10 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewAlbum extends ViewRecord
 {
     protected static string $resource = AlbumResource::class;
+
+    // Avoid displaying the relationManagers (authors and publishers)
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
 }

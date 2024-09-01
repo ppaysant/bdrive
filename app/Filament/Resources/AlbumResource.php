@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Forms\AlbumForm;
 use App\Filament\Resources\AlbumResource\Pages;
+use App\Filament\Resources\AlbumResource\RelationManagers\AuthorsRelationManager;
+use App\Filament\Resources\AlbumResource\RelationManagers\PublishersRelationManager;
 use App\Models\Album;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\ImageEntry;
@@ -29,7 +31,7 @@ class AlbumResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(AlbumForm::getForm());
+            ->schema(AlbumForm::getForm($form->getOperation()));
     }
 
     public static function table(Table $table): Table
@@ -136,7 +138,8 @@ class AlbumResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuthorsRelationManager::class,
+            PublishersRelationManager::class,
         ];
     }
 

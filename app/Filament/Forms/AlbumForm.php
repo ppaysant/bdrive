@@ -2,7 +2,9 @@
 
 namespace App\Filament\Forms;
 
+use App\Filament\Forms\ProviderForm\BnfProviderForm;
 use App\Models\Album;
+use App\Models\Publisher;
 use App\Services\AlbumInfos;
 use App\Services\AlbumInfosBnfProvider;
 use Filament\Forms\Components\Actions\Action;
@@ -20,7 +22,7 @@ use Filament\Forms\Set;
 
 class AlbumForm
 {
-    public static function getForm(): array
+    public static function getForm(string|null $operation = null): array
     {
         return [
             TextInput::make('title')
@@ -31,11 +33,11 @@ class AlbumForm
                 ->suffixAction(
                     Action::make('getInfosFromBnf')
                         ->icon('heroicon-s-inbox-arrow-down')
-                        ->mountUsing(function (Form $form, Album $record) {
+                        ->mountUsing(function (Form $form, $state) {
                             $form->fill();
 
                             $album = new AlbumInfos();
-                            $bnf = new AlbumInfosBnfProvider($record->isbn);
+                            $bnf = new AlbumInfosBnfProvider($state);
                             if (!$bnf->getDatas()) {
                                 return;
                             }
@@ -43,61 +45,33 @@ class AlbumForm
                             $form->fill([
                                 'title' => $album->title,
                                 'resume' => $album->resume,
-                                'serie' => $album->serie,
+                                'materialDescription' => $album->materialDescription,
+                                'original_serie' => $album->serie,
                                 'serie_issue' => $album->serie_issue,
-                                'publisher' => $album->publisher,
+                                'original_publisher' => $album->publisher,
+                                'authors' => join(', ', $album->authors),
                             ]);
                         })
-                        ->form([
-                            Fieldset::make()->schema([
-                                Checkbox::make('getTitle')
-                                    ->hiddenLabel()
-                                    ->columnSpan(1),
-                                TextInput::make('title')
-                                    ->disabled(true)
-                                    ->dehydrated()
-                                    ->columnSpan(11),
-                                Checkbox::make('getResume')
-                                    ->hiddenLabel()
-                                    ->columnSpan(1),
-                                Textarea::make('resume')
-                                    ->rows(10)
-                                    ->disabled(true)
-                                    ->dehydrated()
-                                    ->columnSpan(11),
-                                Checkbox::make('getSerie')
-                                    ->hiddenLabel()
-                                    ->columnSpan(1),
-                                TextInput::make('serie')
-                                    ->disabled(true)
-                                    ->dehydrated()
-                                    ->columnSpan(11),
-                                Checkbox::make('getSerieIssue')
-                                    ->hiddenLabel()
-                                    ->columnSpan(1),
-                                TextInput::make('serie_issue')
-                                    ->disabled(true)
-                                    ->dehydrated()
-                                    ->columnSpan(11),
-                                Checkbox::make('getPublisher')
-                                    ->hiddenLabel()
-                                    ->columnSpan(1),
-                                TextInput::make('publisher')
-                                    ->disabled(true)
-                                    ->dehydrated()
-                                    ->columnSpan(11),
-                            ])->columns(12),
-                        ])
-                        ->action(function (array $data, Set $set) {
+                        ->form(BnfProviderForm::getForm($operation))
+                        ->action(function (array $data, Set $set) use ($operation) {
                             if ($data['getTitle'] == 1) {
                                 $set('title', $data['title']);
                             }
                             if ($data['getResume'] == 1) {
                                 $set('summary', $data['resume']);
                             }
+                            if ($data['getPages'] == 1) {
+                                $set('pages', $data['materialDescription']);
+                            }
+                            if ($data['getSerie'] == 1) {
+                                $set('serie_id', $data['serie']);
+                            }
                             if ($data['getSerieIssue'] == 1) {
                                 $set('serie_issue', $data['serie_issue']);
                             }
+                            // if ($data['getPublisher'] == 1) {
+                            //     $set('publisher', $data['publisher']);
+                            // }
                         })
                 ),
             Toggle::make('complete')

@@ -83,6 +83,9 @@ class AlbumInfosBnfProvider implements AlbumInfosProvider
                         $album->publisher = (string)$this->getCode($field, 'c');
                     }
                     break;
+                case '215':
+                    $album->materialDescription = join(', ', $this->getRepetableCodes($field, 'a'));
+                    break;
                 case '330':
                     $album->resume = (string)$this->getCode($field, 'a');
                     break;
