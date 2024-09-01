@@ -46,6 +46,13 @@ class AlbumInfosBnfProvider implements AlbumInfosProvider
 
         $data = $child->records->record->recordData;
         $dataNs = $data->getNamespaces(true);
+
+        // BNF is not exempt of bugs (or is it feature I don't understand ?)
+        if (empty($dataNs['mxc'])) {
+            $this->xmlDatas = null;
+            return false;
+        }
+
         $child = $data->children($dataNs['mxc']);
 
         $this->xmlDatas = $child;
@@ -62,6 +69,9 @@ class AlbumInfosBnfProvider implements AlbumInfosProvider
             switch ((string)$tag) {
                 case '200':
                     $album->title = (string)$this->getCode($field, 'a');
+                    if (!empty($this->getCode($field, 'e'))) {
+                        $album->title .= ' / ' . (string)$this->getCode($field, 'e');
+                    }
                     $album->authors[] = $this->getCode($field, 'f');
                     $album->authors = array_merge($album->authors, $this->getRepetableCodes($field, 'g'));
                     break;
