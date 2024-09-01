@@ -100,7 +100,9 @@ class AlbumResource extends Resource
             ->schema([
                 ImageEntry::make('cover')
                     ->hiddenLabel(true)
-                    ->defaultImageUrl(url('/storage/no-picture.png')),
+                    ->defaultImageUrl(url('/storage/no-picture.png'))
+                    ->size('80%')
+                    ->grow(true),
                 TextEntry::make('title'),
                 TextEntry::make('serie.title')
                     ->state(fn (Album|null $record): string => (
